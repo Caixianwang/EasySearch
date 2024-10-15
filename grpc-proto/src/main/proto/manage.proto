@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+import "common.proto";
+option java_package = "ca.wisecode.lucene.grpc.models";
+option java_outer_classname = "ManageProto";
+option java_multiple_files = true;
+
+service ManageService {
+    rpc docsTotal (JsonIn) returns (JsonOut) {}
+    rpc balance (BalanceRequest) returns (JsonOut) {}
+}
+
+message TargetNode {
+    string host = 1;
+    int32 port = 2;
+    int32 cnt = 3;
+}
+message BalanceRequest {
+    repeated TargetNode targetNodes = 1;
+}
+
+

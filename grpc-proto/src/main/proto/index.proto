@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+import "common.proto";
+option java_package = "ca.wisecode.lucene.grpc.models";
+option java_outer_classname = "IndexProto";
+option java_multiple_files = true;
+
+service IndexService {
+    rpc insertRows (RowsRequest) returns (JsonOut) {}
+    rpc insertTable (TableRequest) returns (JsonOut) {}
+}
+
+
+message Cell {
+    string name = 1;
+    string type = 2;
+    oneof value {
+        string stringVal = 3;
+        double doubleVal = 4; // 可以根据需要添加其他类型
+        int64 longVal = 5;
+    }
+}
+
+message Row {
+    string author = 1;
+    string prjID = 2;
+    repeated Cell cells = 3;
+}
+message RowsRequest {
+    repeated Row rows = 1;
+}
+message TableRequest {
+    string author = 1;
+    RowsRequest rowsRequest = 3;
+}
+
+

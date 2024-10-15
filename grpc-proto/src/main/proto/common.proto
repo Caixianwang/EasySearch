@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+option java_package = "ca.wisecode.lucene.grpc.models";
+option java_multiple_files = true;
+message JsonIn {
+    string msg = 1;
+}
+message JsonOut {
+    string msg = 1;
+}

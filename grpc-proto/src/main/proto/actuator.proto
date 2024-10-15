@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+import "common.proto";
+option java_package = "ca.wisecode.lucene.grpc.models";
+option java_outer_classname = "ActuatorProto";
+option java_multiple_files = true;
+
+service ActuatorService {
+    rpc health (HealthInOut) returns (HealthInOut) {}
+}
+
+message HealthInOut {
+    string host = 1;
+    int32 port = 2;
+    int32 state = 3;
+    string msg = 4;
+}
+

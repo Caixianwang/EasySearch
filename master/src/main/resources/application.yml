@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: lucene-master
+  lifecycle:
+    timeout-per-shutdown-phase: "2m"
+  sqlite:
+    url: easy.db
+
+server:
+  port: 8080
+  http2:
+    enabled: true
+
+grpc:
+  port: 50050
+

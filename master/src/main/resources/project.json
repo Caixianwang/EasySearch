@@ -1,0 +1,28 @@
+[
+  {
+    "prjID": "000",
+    "fields": [
+      {
+        "name": "author",
+        "type": "String"
+      },
+      {
+        "name": "content",
+        "type": "Text"
+      },
+      {
+        "name": "followers",
+        "type": "Long"
+      },
+      {
+        "name": "created",
+        "type": "Date",
+        "format": "yyyy-MM-dd HH:mm:ss"
+      },
+      {
+        "name": "income",
+        "type": "Double"
+      }
+    ]
+  }
+]
