@@ -32,7 +32,7 @@ public class ShutdownService {
 
     @PreDestroy
     public void onShutdown() {
-        nodeChannel.setState(NodeState.NINE_CLOSE_);
+        nodeChannel.setState(NodeState.NINE_CLOSED_);
         healthService.healthCheck(nodeChannel);
         nodeChannel.getChannel().shutdown();
         try {

@@ -1,9 +1,4 @@
-package ca.wisecode.lucene.master.grpc.client.index.balance.vo;
-
-import ca.wisecode.lucene.grpc.models.TargetNode;
-
-import java.util.ArrayList;
-import java.util.List;
+package ca.wisecode.lucene.master.grpc.client.distribute.vo;
 
 /**
  * @author: caixianwang2022@gmail.com
@@ -17,7 +12,7 @@ public class BalanceNode {
     private final int port;
     private int total;
     private int avg;
-    private double percent = 0.0;
+    private float percent = 0.0f;
 
     public BalanceNode(String host, int port) {
         this.host = host;
@@ -50,11 +45,11 @@ public class BalanceNode {
         this.avg = avg;
     }
 
-    public double getPercent() {
+    public float getPercent() {
         return percent;
     }
 
-    public void setPercent(double percent) {
+    public void setPercent(float percent) {
         this.percent = percent;
     }
 }

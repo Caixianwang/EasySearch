@@ -1,9 +1,10 @@
 package ca.wisecode.lucene.slave.grpc.server;
 
-import ca.wisecode.lucene.grpc.models.BalanceRequest;
+import ca.wisecode.lucene.grpc.models.DistributeRequest;
 import ca.wisecode.lucene.grpc.models.JsonIn;
 import ca.wisecode.lucene.grpc.models.JsonOut;
 import ca.wisecode.lucene.grpc.models.ManageServiceGrpc;
+import ca.wisecode.lucene.slave.cfg.ApplicationContextHolder;
 import ca.wisecode.lucene.slave.grpc.server.manage.ManageImpl;
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
@@ -31,10 +32,24 @@ public class ManageGrpc extends ManageServiceGrpc.ManageServiceImplBase {
     }
 
     @Override
-    public void balance(BalanceRequest balanceRequest, StreamObserver<JsonOut> responseObserver) {
+    public void balance(DistributeRequest balanceRequest, StreamObserver<JsonOut> responseObserver) {
         JsonOut jsonOut = manageImpl.balance(balanceRequest);
         responseObserver.onNext(jsonOut);
         responseObserver.onCompleted();
+    }
+
+    @Override
+    public void remove(DistributeRequest removeRequest, StreamObserver<JsonOut> responseObserver) {
+        JsonOut jsonOut = manageImpl.remove(removeRequest);
+        responseObserver.onNext(jsonOut);
+        responseObserver.onCompleted();
+        try {
+            Thread.sleep(1000);
+            ApplicationContextHolder.shutdown();
+        } catch (InterruptedException e) {
+            log.error(e.getMessage());
+        }
+
     }
 
 }

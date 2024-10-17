@@ -7,12 +7,13 @@ package ca.wisecode.lucene.common.grpc.node;
  * @description:
  */
 public enum NodeState {
+    ONE_BALANCING(1),
+    ZERO_RUNNING(0),
 
-    ZERO_RUN(0),
-    ONE_BALANCE(1),
-    ONE_REMOVE(-1),
-    TWO_FAIL_(-2),
-    NINE_CLOSE_(-9);
+    ONE_FAILURE_(-1),
+    TWO_REMOVING_(-2),
+
+    NINE_CLOSED_(-9);
 
     private int value;
 

@@ -7,7 +7,8 @@ option java_multiple_files = true;
 
 service ManageService {
     rpc docsTotal (JsonIn) returns (JsonOut) {}
-    rpc balance (BalanceRequest) returns (JsonOut) {}
+    rpc balance (DistributeRequest) returns (JsonOut) {}
+    rpc remove (DistributeRequest) returns (JsonOut) {}
 }
 
 message TargetNode {
@@ -15,7 +16,7 @@ message TargetNode {
     int32 port = 2;
     int32 cnt = 3;
 }
-message BalanceRequest {
+message DistributeRequest {
     repeated TargetNode targetNodes = 1;
 }
 

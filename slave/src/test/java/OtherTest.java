@@ -1,4 +1,3 @@
-import ca.wisecode.lucene.common.exception.BusinessException;
 import ca.wisecode.lucene.common.util.Constants;
 import ca.wisecode.lucene.slave.grpc.client.service.SearchManager;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +23,25 @@ import java.util.List;
  */
 @Slf4j
 public class OtherTest {
-    private IndexReader reader = null;
+
+    @Test
+    public void t0001() throws Exception {
+        Directory directory = FSDirectory.open(Paths.get("/home/search/index"));
+        IndexWriterConfig config = new IndexWriterConfig(new IKAnalyzer(true));
+
+        // 检查目录中是否存在索引，如果不存在则创建
+        if (!DirectoryReader.indexExists(directory)) {
+            System.out.println("索引不存在，正在创建一个空索引...");
+            IndexWriter indexWriter = new IndexWriter(directory, config);
+            indexWriter.commit(); // 提交空索引
+            indexWriter.close();
+        }
+
+        // 打开 DirectoryReader
+        DirectoryReader reader = DirectoryReader.open(directory);
+        reader.close();
+        directory.close();
+    }
 
 
     @Test
@@ -77,6 +94,33 @@ public class OtherTest {
         }
     }
 
+    @Test
+    public void pageQuery1() throws Exception {
+        Directory directory = FSDirectory.open(Paths.get("/home/search/index"));
+        IndexWriterConfig config = new IndexWriterConfig(new IKAnalyzer(true));
+        IndexWriter indexWriter = new IndexWriter(directory, config);
+        SearchManager searchManager = new SearchManager(directory);
+        MatchAllDocsQuery query = new MatchAllDocsQuery();  // 可替换为其他查询
+
+        List<String> deleteIds = new ArrayList<>();
+        IndexSearcher searcher = searchManager.getSearcher();
+        TopDocs topDocs = searcher.search(query, 100);
+        while (topDocs.scoreDocs.length > 0) {
+            log.info("topDocs.scoreDocs.length=" + topDocs.scoreDocs.length);
+            for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+                Document doc = searcher.doc(scoreDoc.doc);
+//                log.info(doc.get(Constants._ID_));
+                deleteIds.add(doc.get(Constants._ID_));
+            }
+            this.deleteDocByIds(indexWriter, deleteIds);
+            searcher = searchManager.getSearcher();
+            topDocs = searcher.search(query, 100);
+        }
+        if (!deleteIds.isEmpty()) {
+            this.deleteDocByIds(indexWriter, deleteIds);
+        }
+    }
+
     private void deleteDocByIds(IndexWriter indexWriter, List<String> ids) {
         Term[] deleteTerms = new Term[ids.size()];
         for (int i = 0; i < deleteTerms.length; i++) {
@@ -95,7 +139,7 @@ public class OtherTest {
 
     @Test
     public void deleteAll() throws Exception {
-        Directory directory = FSDirectory.open(Paths.get("/home/search/index2"));
+        Directory directory = FSDirectory.open(Paths.get("/home/search/index3"));
         IndexWriterConfig config = new IndexWriterConfig(new IKAnalyzer(true));
         IndexWriter indexWriter = new IndexWriter(directory, config);
 
@@ -108,12 +152,28 @@ public class OtherTest {
     }
 
     @Test
+    public void test001() throws Exception {
+        int cnt = 0;
+        for (int i = 1; i < 4; i++) {
+            Directory directory = FSDirectory.open(Paths.get("/home/search/index" + i));
+            SearchManager searchManager = new SearchManager(directory);
+            IndexReader reader = searchManager.getReader();
+            int currCnt = reader.numDocs();
+            cnt += currCnt;
+            log.info("index" + i + " " + currCnt);
+            reader.close();
+            directory.close();
+        }
+        log.info("total " + cnt);
+    }
+
+    @Test
     public void insert() throws Exception {
-        Directory directory = FSDirectory.open(Paths.get("/home/search/index"));
+        Directory directory = FSDirectory.open(Paths.get("/home/search/index1"));
         IndexWriterConfig config = new IndexWriterConfig(new IKAnalyzer(true));
         IndexWriter indexWriter = new IndexWriter(directory, config);
 
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 10000000; i++) {
             Document doc = new Document();
             doc.add(new StringField(Constants._ID_, "id" + i, Field.Store.YES));
             doc.add(new StringField(Constants._PRJID_, "000", Field.Store.YES));
@@ -132,44 +192,71 @@ public class OtherTest {
         directory.close();
     }
 
-
     @Test
-    public void delete() throws Exception {
+    public void insert01() throws Exception {
         Directory directory = FSDirectory.open(Paths.get("/home/search/index1"));
         IndexWriterConfig config = new IndexWriterConfig(new IKAnalyzer(true));
         IndexWriter indexWriter = new IndexWriter(directory, config);
-        DirectoryReader directoryReader = DirectoryReader.open(indexWriter, true, true);
 
-        IndexSearcher searcher = new IndexSearcher(directoryReader);
 
-        Query query = new MatchAllDocsQuery();
-        TopDocs topDocs = searcher.search(query, 100);
+        Document doc = new Document();
+        doc.add(new StringField(Constants._ID_, "id0", Field.Store.YES));
+        doc.add(new LongPoint("followers", 18));
+        indexWriter.addDocument(doc);
 
-        for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
-            Document doc = searcher.doc(scoreDoc.doc);
-            log.info(doc.toString());
-        }
-        Term deleteTerm = new Term("title", "1");
-        indexWriter.deleteDocuments(deleteTerm);
-        indexWriter.flush();
+        Thread t1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 10; i < 13; i++) {
 
-        log.info("----------------------------------------");
-        topDocs = searcher.search(query, 100);
+                    Document doc = new Document();
+                    doc.add(new StringField(Constants._ID_, "id" + i, Field.Store.YES));
+                    doc.add(new LongPoint("followers", 18));
+                    try {
+                        Thread.sleep(500);
+                        indexWriter.addDocument(doc);
+                        indexWriter.commit();
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }
+        });
+        Thread t2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
 
-        for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
-            Document doc = searcher.doc(scoreDoc.doc);
-            log.info(doc.toString());
-        }
-        DirectoryReader newDirectoryReader = DirectoryReader.openIfChanged(directoryReader);  // 检查是否有新索引
-        searcher = new IndexSearcher(newDirectoryReader);
-        log.info("----------------------------------------");
-        topDocs = searcher.search(query, 100);
+                for (int i = 10; i < 13; i++) {
+                    List<Document> documents = new ArrayList<>();
+                    Document doc = new Document();
+                    doc.add(new StringField(Constants._ID_, "A01", Field.Store.YES));
+                    doc.add(new LongPoint("followers", 18));
+                    documents.add(doc);
+                    doc = new Document();
+                    doc.add(new StringField(Constants._ID_, "B01", Field.Store.YES));
+                    doc.add(new StringField("followers", "18", Field.Store.YES));
+                    documents.add(doc);
+                    try {
+                        indexWriter.addDocuments(documents);
+                        Thread.sleep(300);
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+//                    indexWriter.commit();
 
-        for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
-            Document doc = searcher.doc(scoreDoc.doc);
-            log.info(doc.toString());
-        }
+            }
+        });
+        t2.start();
+        t1.start();
+
+        Thread.sleep(10000);
+
+//        indexWriter.commit();
+        indexWriter.close();
+        directory.close();
     }
+
 
     @Test
     public void test07() throws Exception {

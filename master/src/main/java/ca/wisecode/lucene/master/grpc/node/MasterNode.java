@@ -28,7 +28,7 @@ public class MasterNode {
     @Getter
     private final List<NodeChannel> channels = new ArrayList<>();
 
-    public void slaveRegister(String slaveHost, int slavePort, int state) {
+    public void slaveHealth(String slaveHost, int slavePort, int state) {
         boolean exist = false;
         for (NodeChannel nodeChannel : channels) {
             if (slavePort == nodeChannel.getTargetPort() && slaveHost.equals(nodeChannel.getTargetHost())) {
@@ -51,7 +51,7 @@ public class MasterNode {
     public List<NodeChannel> availableChannels() {
         List<NodeChannel> availableList = new ArrayList<>();
         for (NodeChannel channel : channels) {
-            if (channel.getState().getValue() >= NodeState.ZERO_RUN.getValue()) {
+            if (channel.getState().getValue() >= NodeState.ZERO_RUNNING.getValue()) {
                 availableList.add(channel);
             }
         }

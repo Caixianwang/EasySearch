@@ -1,6 +1,6 @@
-package ca.wisecode.lucene.master.grpc.client.index.balance.dist;
+package ca.wisecode.lucene.master.grpc.client.distribute.balance;
 
-import ca.wisecode.lucene.master.grpc.client.index.balance.vo.BalanceNode;
+import ca.wisecode.lucene.master.grpc.client.distribute.vo.BalanceNode;
 
 import java.util.List;
 

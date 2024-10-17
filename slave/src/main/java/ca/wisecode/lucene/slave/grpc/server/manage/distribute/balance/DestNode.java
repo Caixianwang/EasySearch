@@ -1,4 +1,4 @@
-package ca.wisecode.lucene.slave.grpc.server.manage.balance.dist;
+package ca.wisecode.lucene.slave.grpc.server.manage.distribute.balance;
 
 import org.apache.lucene.search.ScoreDoc;
 

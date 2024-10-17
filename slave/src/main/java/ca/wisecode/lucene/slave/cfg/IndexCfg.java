@@ -1,11 +1,11 @@
 package ca.wisecode.lucene.slave.cfg;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.SerialMergeScheduler;
-import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +23,7 @@ import java.nio.file.Paths;
  * @description:
  */
 @Configuration
+@Slf4j
 public class IndexCfg {
     @Value("${lucene.index-dir}")
     private String indexDir;
@@ -50,14 +51,13 @@ public class IndexCfg {
 
     @Bean
     public IndexWriter indexWriter(Directory directory, IndexWriterConfig config) throws IOException {
-        return new IndexWriter(directory, config);
+        IndexWriter indexWriter = new IndexWriter(directory, config);
+        if (!DirectoryReader.indexExists(directory)) {
+            indexWriter.commit();
+            log.info("Index does not exist, creating an empty index...");
+        }
+        return indexWriter;
     }
-
-    @Bean
-    public DirectoryReader directoryReader(Directory directory) throws IOException {
-        return DirectoryReader.open(directory);
-    }
-
 
 }
 

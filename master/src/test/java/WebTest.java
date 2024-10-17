@@ -34,7 +34,7 @@ public class WebTest {
                 .multiPart("file", file) //
                 .log().all()  // 记录所有请求信息
                 .when()
-                .post("/api/upload-csv") // 发送 POST 请求
+                .post("/api/file/upload-csv") // 发送 POST 请求
                 .then()
                 .log().all()  // 记录所有响应信息
                 .statusCode(200) // 验证响应状态
@@ -42,10 +42,21 @@ public class WebTest {
 
     }
     @Test
-    void test02() throws Exception {
+    void balance() throws Exception {
         RestAssured.given()
                 .log().all()  // 记录所有请求信息
-                .when().get("/api/distribute")
+                .when().get("/api/distribute/balance")
+                .then()
+                .log().all()  // 记录所有响应信息
+                .statusCode(200);
+    }
+    @Test
+    void remove() throws Exception {
+        RestAssured.given()
+                .log().all()  // 记录所有请求信息
+                .queryParam("host", "192.168.1.89")  // Add the 'host' query parameter
+                .queryParam("port", 50051)           // Add the 'port' query parameter
+                .when().get("/api/distribute/remove")
                 .then()
                 .log().all()  // 记录所有响应信息
                 .statusCode(200);

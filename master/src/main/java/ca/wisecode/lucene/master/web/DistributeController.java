@@ -15,9 +15,9 @@ import org.springframework.web.multipart.MultipartFile;
  * @description:
  */
 @RestController
-@RequestMapping("/api/file")
+@RequestMapping("/api/distribute")
 @Slf4j
-public class FileUploadController {
+public class DistributeController {
     @Autowired
     private IndexBS indexBS;
     @Autowired
@@ -25,11 +25,15 @@ public class FileUploadController {
     @Autowired
     private RemoveService removeService;
 
-    @PostMapping("/upload-csv")
-    public String uploadCsvFile(@RequestParam("file") MultipartFile file, @RequestParam(value = "prjID", defaultValue = "000") String prjID) {
-        log.info("{},{}", file.getName(), prjID);
-        indexBS.indexByFile(prjID, file);
-        return "ok";
+    @GetMapping("/balance")
+    public String balance() {
+        balanceService.balance();
+        return "balanceService";
     }
 
+    @GetMapping("/remove")
+    public String remove(@RequestParam("host") String host, @RequestParam("port") int port) {
+        removeService.remove(host,port);
+        return "removeService";
+    }
 }

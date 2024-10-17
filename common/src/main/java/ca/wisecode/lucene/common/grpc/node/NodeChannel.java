@@ -21,7 +21,7 @@ public class NodeChannel {
     private final String targetHost;
     private final int targetPort;
     private ManagedChannel channel;
-    private NodeState state = NodeState.ZERO_RUN;
+    private NodeState state = NodeState.ZERO_RUNNING;
     private LocalDateTime lastTime = LocalDateTime.now();
     private int failTimes = 0;
 

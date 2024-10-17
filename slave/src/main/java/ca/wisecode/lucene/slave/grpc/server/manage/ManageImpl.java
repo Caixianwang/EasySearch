@@ -4,12 +4,13 @@ package ca.wisecode.lucene.slave.grpc.server.manage;
 import ca.wisecode.lucene.common.grpc.node.NodeChannel;
 import ca.wisecode.lucene.common.grpc.node.NodeState;
 import ca.wisecode.lucene.common.util.Constants;
-import ca.wisecode.lucene.grpc.models.BalanceRequest;
+import ca.wisecode.lucene.grpc.models.DistributeRequest;
 import ca.wisecode.lucene.grpc.models.JsonIn;
 import ca.wisecode.lucene.grpc.models.JsonOut;
+import ca.wisecode.lucene.slave.grpc.client.service.HealthService;
 import ca.wisecode.lucene.slave.grpc.client.service.SearchManager;
-import ca.wisecode.lucene.slave.grpc.server.manage.balance.dist.DistBalance;
-import ca.wisecode.lucene.slave.grpc.server.manage.balance.dist.DistBalanceService;
+import ca.wisecode.lucene.slave.grpc.server.manage.distribute.balance.BalanceDistribute;
+import ca.wisecode.lucene.slave.grpc.server.manage.distribute.remove.RemoveDistribute;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -31,9 +32,13 @@ public class ManageImpl {
     @Autowired
     private SearchManager searchManager;
     @Autowired
-    private DistBalanceService distBalanceService;
+    private BalanceDistribute balanceDistribute;
+    @Autowired
+    private RemoveDistribute removeDistribute;
     @Autowired
     private NodeChannel nodeChannel;
+    @Autowired
+    private HealthService healthService;
 
     public JsonOut docsTotal(final JsonIn req) {
         try {
@@ -50,15 +55,31 @@ public class ManageImpl {
 
     }
 
-    public JsonOut balance(final BalanceRequest balanceRequest) {
+    public JsonOut balance(final DistributeRequest balanceRequest) {
         try {
-            nodeChannel.setState(NodeState.ONE_BALANCE);
-            distBalanceService.executeDistribute(balanceRequest);
+            nodeChannel.setState(NodeState.ONE_BALANCING);
+            healthService.healthCheck(nodeChannel);
+            balanceDistribute.distribute(balanceRequest);
             return JsonOut.newBuilder()
                     .setMsg(String.format("{\"code\":200,\"total\":\"%d\"}", searchManager.getReader().numDocs()))
                     .build();
-        }finally {
-            nodeChannel.setState(NodeState.ZERO_RUN);
+        } finally {
+            nodeChannel.setState(NodeState.ZERO_RUNNING);
+        }
+
+    }
+
+    public JsonOut remove(final DistributeRequest removeRequest) {
+        try {
+            int numDocs = searchManager.getReader().numDocs();
+            nodeChannel.setState(NodeState.TWO_REMOVING_);
+            healthService.healthCheck(nodeChannel);
+            removeDistribute.distribute(removeRequest);
+            return JsonOut.newBuilder()
+                    .setMsg(String.format("{\"code\":200,\"total\":\"%d\"}", numDocs))
+                    .build();
+        } finally {
+            nodeChannel.setState(NodeState.NINE_CLOSED_);
         }
 
     }

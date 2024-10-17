@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.net.UnknownHostException;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author: caixianwang2022@gmail.com
@@ -31,6 +32,11 @@ public class BeanCfg {
     private String masterHost;
     @Value("${grpc.port:50050}")
     private int masterPort;
+
+    @Bean
+    public ReentrantLock getReentrantLock() {
+        return new ReentrantLock(); // 共享的锁
+    }
 
     @Bean
     public EnvInfo getEnvInfo() throws UnknownHostException {

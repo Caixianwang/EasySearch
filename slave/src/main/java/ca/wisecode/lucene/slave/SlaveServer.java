@@ -1,16 +1,16 @@
 package ca.wisecode.lucene.slave;
 
 import ca.wisecode.lucene.common.grpc.node.NodeChannel;
+import ca.wisecode.lucene.slave.cfg.ApplicationContextHolder;
 import ca.wisecode.lucene.slave.grpc.client.service.HealthService;
 import io.grpc.Server;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author: caixianwang2022@gmail.com
@@ -24,7 +24,11 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class SlaveServer {
     public static void main(final String[] args) {
-        SpringApplication.run(SlaveServer.class, args);
+        for(String agr:args){
+            log.info(agr);
+        }
+        ConfigurableApplicationContext context = SpringApplication.run(SlaveServer.class, args);
+        ApplicationContextHolder.setContext(context);
 
     }
 

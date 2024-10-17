@@ -39,7 +39,7 @@ public class SearchManager {
                 IndexReader oldReader = currentReader.get();
                 currentReader.set(newReader);
                 currentSearcher.set(new IndexSearcher(newReader));
-                oldReader.decRef();
+//                oldReader.decRef();
             }
             // 返回缓存的 IndexSearcher
             return currentSearcher.get();
@@ -55,7 +55,8 @@ public class SearchManager {
                 // 如果索引发生了变化，创建一个新的 IndexSearcher
                 IndexReader oldReader = currentReader.get();
                 currentReader.set(newReader);
-                oldReader.decRef();
+                currentSearcher.set(new IndexSearcher(newReader));
+//                oldReader.decRef();
                 return newReader;
             } else {
                 return currentReader.get();

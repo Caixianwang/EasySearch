@@ -89,7 +89,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring.boot.version}</version>
                 <configuration>
-                    <mainClass>ca.wisecode.lucene.slave.MasterServer</mainClass>
+                    <mainClass>ca.wisecode.lucene.master.MasterServer</mainClass>
                     <layout>JAR</layout>
                     <excludes>
                         <exclude>

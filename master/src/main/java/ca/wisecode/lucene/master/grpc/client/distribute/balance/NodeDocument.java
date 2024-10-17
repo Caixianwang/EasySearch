@@ -1,11 +1,11 @@
-package ca.wisecode.lucene.master.grpc.client.index.balance.dist;
+package ca.wisecode.lucene.master.grpc.client.distribute.balance;
 
 import ca.wisecode.lucene.common.exception.BusinessException;
 import ca.wisecode.lucene.common.grpc.node.NodeChannel;
 import ca.wisecode.lucene.grpc.models.JsonIn;
 import ca.wisecode.lucene.grpc.models.JsonOut;
 import ca.wisecode.lucene.grpc.models.ManageServiceGrpc;
-import ca.wisecode.lucene.master.grpc.client.index.balance.vo.BalanceNode;
+import ca.wisecode.lucene.master.grpc.client.distribute.vo.BalanceNode;
 import ca.wisecode.lucene.master.grpc.node.MasterNode;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;

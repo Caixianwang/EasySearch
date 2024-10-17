@@ -9,6 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.document.*;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author: caixianwang2022@gmail.com
  * @date: 9/3/2024 2:35 PM
@@ -31,6 +34,7 @@ public class IndexImpl extends IndexBase {
     public JsonOut insertRows(RowsRequest rowsRequest) {
         final int[] sizeHolder = new int[1];
         indexTemplate.addIndex(indexWriter -> {
+            List<Document> docs = new ArrayList<>();
             for (Row row : rowsRequest.getRowsList()) {
                 Document doc = new Document();
                 for (Cell cell : row.getCellsList()) {
@@ -51,8 +55,9 @@ public class IndexImpl extends IndexBase {
                         }
                     }
                 }
-                indexWriter.addDocument(doc);
+                docs.add(doc);
             }
+            indexWriter.addDocuments(docs);
             sizeHolder[0] = rowsRequest.getRowsCount();
             return sizeHolder[0];
         });
