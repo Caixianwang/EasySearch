@@ -18,4 +18,4 @@ grpc:
 
 #    port: ${server.port}
 lucene:
-  index-dir: /home/search/index1
+  path: /home/search/index1

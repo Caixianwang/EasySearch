@@ -25,7 +25,7 @@ import java.nio.file.Paths;
 @Configuration
 @Slf4j
 public class IndexCfg {
-    @Value("${lucene.index-dir}")
+    @Value("${lucene.path}")
     private String indexDir;
 
     @Bean
