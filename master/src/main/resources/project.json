@@ -1,5 +1,27 @@
 [
   {
+    "prjID": "001",
+    "fields": [
+      {
+        "name": "author",
+        "type": "String"
+      },
+      {
+        "name": "title",
+        "type": "Text"
+      },
+      {
+        "name": "replies",
+        "type": "Long"
+      },
+      {
+        "name": "created",
+        "type": "Date",
+        "format": "yyyy-MM-dd"
+      }
+    ]
+  },
+  {
     "prjID": "000",
     "fields": [
       {

@@ -1,6 +1,11 @@
 import ca.wisecode.lucene.common.util.Constants;
+import ca.wisecode.lucene.grpc.models.FilterRule;
 import ca.wisecode.lucene.slave.grpc.client.service.SearchManager;
+import ca.wisecode.lucene.slave.grpc.server.query.mode.AbstractQuery;
+import ca.wisecode.lucene.slave.grpc.server.query.mode.ChainQueryFactory;
+import ca.wisecode.lucene.slave.grpc.server.query.mode.IWrapQuery;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
@@ -23,6 +28,65 @@ import java.util.List;
  */
 @Slf4j
 public class OtherTest {
+
+    @Test
+    public void t0002() throws Exception {
+        Directory directory = FSDirectory.open(Paths.get("/home/search/index5"));
+        SearchManager searchManager = new SearchManager(directory);
+        IndexSearcher searcher = searchManager.getSearcher();
+        Analyzer analyzer = new IKAnalyzer(true);
+        BooleanQuery.Builder builder = new BooleanQuery.Builder();
+        IWrapQuery iWrapQuery = ChainQueryFactory.getInstance().buildQuery(analyzer, builder);
+        FilterRule filterRule1 = FilterRule.newBuilder()
+                .setName("author")
+                .setValue("刘超")
+                .setQueryMode(AbstractQuery.Mode.Term)
+                .setLogic(AbstractQuery.LOGIC.AND).build();
+        iWrapQuery.build(filterRule1);
+        FilterRule filterRule2 = FilterRule.newBuilder()
+                .setName("title")
+                .setValue("挑战经验失败总结潜力目标联系")
+                .setQueryMode(AbstractQuery.Mode.Parser)
+                .setLogic(AbstractQuery.LOGIC.NOT).build();
+        iWrapQuery.build(filterRule2);
+        BooleanQuery query = builder.build();
+        log.info(builder.build().toString());
+//        +title:挑战经验失败总结潜力目标联系
+//        +(title:挑战 title:经验 title:失败 title:总结 title:潜力 title:目标 title:联系)
+        TopDocs topDocs = searcher.search(query, 10);
+        log.info(topDocs.scoreDocs.length+"");
+        for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+            Document doc = searcher.doc(scoreDoc.doc);
+            log.info(doc.toString());
+        }
+
+
+    }
+
+    @Test
+    public void insert001() throws Exception {
+        Directory directory = FSDirectory.open(Paths.get("/home/search/index5"));
+        IndexWriterConfig config = new IndexWriterConfig(new IKAnalyzer(true));
+        IndexWriter indexWriter = new IndexWriter(directory, config);
+
+        Document doc = new Document();
+
+        doc.add(new StringField("author", "刘超", Field.Store.YES));
+        doc.add(new TextField("title", "效率想法思路社区趋势支持旅行信息心得交流", Field.Store.YES));
+        indexWriter.addDocument(doc);
+        doc = new Document();
+        doc.add(new StringField("author", "刘敏", Field.Store.YES));
+        doc.add(new TextField("title", "挑战经验失败总结潜力目标联系建议学习合作", Field.Store.YES));
+        indexWriter.addDocument(doc);
+        doc = new Document();
+        doc.add(new StringField("author", "陈敏", Field.Store.YES));
+        doc.add(new TextField("title", "成长乐趣工具技术成果挑战建议旅行实现成果", Field.Store.YES));
+        indexWriter.addDocument(doc);
+
+        indexWriter.commit();
+        indexWriter.close();
+        directory.close();
+    }
 
     @Test
     public void t0001() throws Exception {
@@ -139,7 +203,7 @@ public class OtherTest {
 
     @Test
     public void deleteAll() throws Exception {
-        Directory directory = FSDirectory.open(Paths.get("/home/search/index3"));
+        Directory directory = FSDirectory.open(Paths.get("/home/search/index5"));
         IndexWriterConfig config = new IndexWriterConfig(new IKAnalyzer(true));
         IndexWriter indexWriter = new IndexWriter(directory, config);
 
@@ -166,6 +230,7 @@ public class OtherTest {
         }
         log.info("total " + cnt);
     }
+
 
     @Test
     public void insert() throws Exception {

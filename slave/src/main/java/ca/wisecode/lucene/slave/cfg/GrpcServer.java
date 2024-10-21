@@ -5,6 +5,7 @@ import ca.wisecode.lucene.slave.env.EnvInfo;
 import ca.wisecode.lucene.slave.grpc.server.ActuatorGrpc;
 import ca.wisecode.lucene.slave.grpc.server.IndexGrpc;
 import ca.wisecode.lucene.slave.grpc.server.ManageGrpc;
+import ca.wisecode.lucene.slave.grpc.server.QueryGrpc;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ import java.io.IOException;
 public class GrpcServer {
 
     private final IndexGrpc indexGrpc;
+    private final QueryGrpc queryGrpc;
     private final ActuatorGrpc actuatorGrpc;
     private final ManageGrpc manageGrpc;
     private final EnvInfo envInfo;
@@ -34,7 +36,9 @@ public class GrpcServer {
     public Server startServer() throws IOException {
         envInfo.setSlaveHost(GrpcUtils.getLocalHost());
         return ServerBuilder.forPort(envInfo.getSlavePort())
-                .addService(indexGrpc).addService(actuatorGrpc)
+                .addService(indexGrpc)
+                .addService(queryGrpc)
+                .addService(actuatorGrpc)
                 .addService(manageGrpc)
                 .build()
                 .start();

@@ -78,61 +78,6 @@ public class OtherTest {
     }
 
     @Test
-    public void test05() {
-        Row.Builder builder = Row.newBuilder();
-        Cell cell = Cell.newBuilder().setName("addr").setType("text").build();
-        cell = null;
-        builder.addCells(cell);
-        Row row = builder.build();
-
-        log.info(row.toString());
-    }
-
-
-    @Test
-    public void test03() throws JsonProcessingException {
-
-        // 要转换的日期字符串
-        String dateString = "12:12:12"; // 可以根据需要更改格式
-        LocalTime time = LocalTime.parse(dateString, DateTimeFormatter.ofPattern("HH:mm:ss"));
-        log.info("" + time.toNanoOfDay() / 1000000);
-        // 定义日期格式
-        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-
-        try {
-            // 将字符串转换为 Date 对象
-            Date date = dateFormat.parse(dateString);
-            System.out.println("Converted Date: " + date);
-        } catch (Exception e) {
-            System.err.println("Error parsing date: " + e.getMessage());
-        }
-
-    }
-
-    @Test
-    public void test02() throws JsonProcessingException {
-
-        Map<String, Object> root = new HashMap<>();
-        root.put("_PRJ_", "001");
-        root.put("rows", new ArrayList<>());
-
-        Map<String, Object> rowMap = new HashMap<>();
-        rowMap.put("name", "AAA");
-        rowMap.put("age", 20);
-        ((List) root.get("rows")).add(rowMap);
-        rowMap = new HashMap<>();
-        rowMap.put("name", "BBB");
-        rowMap.put("age", 25);
-        ((List) root.get("rows")).add(rowMap);
-
-        String jsonString = objectMapper.writeValueAsString(root);
-        JsonNode jsonNode = objectMapper.convertValue(root, JsonNode.class);
-        log.info(jsonString);
-        log.info(jsonNode.toString());
-
-    }
-
-    @Test
     public void test01() {
         String jsonString = "{\"info\":20,\"rows\":[{\"createdAt\": \"2023-09-22T14:00:00Z\", \"age\": 30,\"birthDate\": \"2023-09-22\"}, {\"name\": \"Bob\", \"age\": \"2023-11-08 19:52:19\"}]}";
         try {
