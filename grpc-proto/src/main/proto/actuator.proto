@@ -12,8 +12,10 @@ service ActuatorService {
 message HealthInOut {
     string host = 1;
     int32 port = 2;
-    int32 state = 3;
-    int32 docsTotal = 4;
-    string msg = 5;
+    int32 serverPort = 3;
+    int32 state = 4;
+    int32 docsTotal = 5;
+    string indexPath = 6;
+    string msg = 7;
 }
 

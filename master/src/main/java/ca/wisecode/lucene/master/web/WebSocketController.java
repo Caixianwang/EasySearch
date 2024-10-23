@@ -77,12 +77,14 @@ public class WebSocketController {
                 List<Map<String, Object>> list = new ArrayList<>();
                 for (NodeChannel nodeChannel : masterNode.getChannels()) {
                     Map<String, Object> map = new HashMap<>();
+                    map.put("slaveServerPort", nodeChannel.getSlaveServerPort());
                     map.put("targetHost", nodeChannel.getTargetHost());
                     map.put("targetPort", nodeChannel.getTargetPort());
                     map.put("sourceHost", nodeChannel.getSourceHost());
                     map.put("sourcePort", nodeChannel.getSourcePort());
                     map.put("state", nodeChannel.getState());
                     map.put("docsTotal", nodeChannel.getDocsTotal());
+                    map.put("indexPath", nodeChannel.getIndexPath());
                     list.add(map);
                 }
                 String currMessage = objectMapper.writeValueAsString(list);

@@ -62,6 +62,18 @@ public class WebTest {
                 .statusCode(200);
     }
     @Test
+    void startSlave() throws Exception {
+        RestAssured.given()
+                .log().all()  // 记录所有请求信息
+                .queryParam("serverPort", 8083)  // Add the 'host' query parameter
+                .queryParam("port", 50053)           // Add the 'port' query parameter
+                .queryParam("indexPath", "/home/search/index3")           // Add the 'port' query parameter
+                .when().get("/api/distribute/startSlave")
+                .then()
+                .log().all()  // 记录所有响应信息
+                .statusCode(200);
+    }
+    @Test
     void queryList() throws Exception {
         RestAssured.given()
                 .log().all()  // 记录所有请求信息

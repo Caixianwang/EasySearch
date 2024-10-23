@@ -21,7 +21,7 @@ public class HealthImpl {
     private MasterNode masterNode;
 
     public HealthInOut health(final HealthInOut healthIn) {
-        masterNode.slaveHealth(healthIn.getHost(), healthIn.getPort(), healthIn.getState(),healthIn.getDocsTotal());
+        masterNode.slaveHealth(healthIn);
         return HealthInOut.newBuilder().build();
     }
 }

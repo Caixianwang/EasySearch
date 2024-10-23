@@ -2,7 +2,7 @@ package ca.wisecode.lucene.master.grpc.node;
 
 import ca.wisecode.lucene.common.grpc.node.NodeChannel;
 import ca.wisecode.lucene.common.grpc.node.NodeState;
-import ca.wisecode.lucene.master.event.SlaveStatusChangeEvent;
+import ca.wisecode.lucene.grpc.models.HealthInOut;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -34,27 +34,29 @@ public class MasterNode {
     @Getter
     private final List<NodeChannel> channels = new ArrayList<>();
 
-    public void slaveHealth(String slaveHost, int slavePort, int state, int docsTotal) {
+    public void slaveHealth(HealthInOut healthIn) {
         boolean exist = false;
         for (NodeChannel nodeChannel : channels) {
-            if (slavePort == nodeChannel.getTargetPort() && slaveHost.equals(nodeChannel.getTargetHost())) {
+            if (healthIn.getPort() == nodeChannel.getTargetPort() && healthIn.getHost().equals(nodeChannel.getTargetHost())) {
                 exist = true;
                 nodeChannel.setLastTime(LocalDateTime.now());
                 nodeChannel.setFailTimes(0);
-                boolean stateChanged = nodeChannel.getState() != NodeState.fromValue(state);
-                boolean docsTotalChanged = nodeChannel.getDocsTotal() != docsTotal;
-                nodeChannel.setState(NodeState.fromValue(state));
-                nodeChannel.setDocsTotal(docsTotal);
-                if (stateChanged || docsTotalChanged) {
+//                boolean stateChanged = nodeChannel.getState() != NodeState.fromValue(healthIn.getState());
+//                boolean docsTotalChanged = nodeChannel.getDocsTotal() != healthIn.getDocsTotal();
+                nodeChannel.setState(NodeState.fromValue(healthIn.getState()));
+                nodeChannel.setDocsTotal(healthIn.getDocsTotal());
+//                if (stateChanged || docsTotalChanged) {
 //                    eventPublisher.publishEvent(new SlaveStatusChangeEvent(this));
-                }
+//                }
             }
         }
         if (!exist) {
-            NodeChannel nodeChannel = new NodeChannel(masterHost, masterPort, slaveHost, slavePort);
-            nodeChannel.buildManagedChannel(slaveHost, slavePort);
-            nodeChannel.setState(NodeState.fromValue(state));
-            nodeChannel.setDocsTotal(docsTotal);
+            NodeChannel nodeChannel = new NodeChannel(masterHost, masterPort, healthIn.getHost(), healthIn.getPort());
+            nodeChannel.buildManagedChannel(healthIn.getHost(), healthIn.getPort());
+            nodeChannel.setState(NodeState.fromValue(healthIn.getState()));
+            nodeChannel.setDocsTotal(healthIn.getDocsTotal());
+            nodeChannel.setIndexPath(healthIn.getIndexPath());
+            nodeChannel.setSlaveServerPort(healthIn.getServerPort());
             channels.add(nodeChannel);
 //            eventPublisher.publishEvent(new SlaveStatusChangeEvent(this));
             log.debug("Master slaveRegister success -> {}", nodeChannel.getTips());

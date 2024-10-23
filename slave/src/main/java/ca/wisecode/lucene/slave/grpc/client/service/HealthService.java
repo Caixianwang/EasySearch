@@ -32,7 +32,9 @@ public class HealthService {
         HealthInOut healthIn = HealthInOut.newBuilder()
                 .setHost(nodeChannel.getSourceHost())
                 .setPort(nodeChannel.getSourcePort())
+                .setServerPort(nodeChannel.getSlaveServerPort())
                 .setState(nodeChannel.getState().getValue())
+                .setIndexPath(nodeChannel.getIndexPath())
                 .setDocsTotal(searchManager.getReader().numDocs())
                 .build();
 

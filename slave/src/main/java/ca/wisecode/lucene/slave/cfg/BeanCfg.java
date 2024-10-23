@@ -26,6 +26,8 @@ public class BeanCfg {
     @Bean
     public NodeChannel initNodeChannel() throws IOException {
         NodeChannel nodeChannel = new NodeChannel(GrpcUtils.getLocalHost(), envInfo.getSlavePort(), envInfo.getMasterHost(), envInfo.getMasterPort());
+        nodeChannel.setIndexPath(envInfo.getIndexPath());
+        nodeChannel.setSlaveServerPort(envInfo.getSlaveServerPort());
         nodeChannel.buildManagedChannel(nodeChannel.getTargetHost(), nodeChannel.getTargetPort());
         return nodeChannel;
     }

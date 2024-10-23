@@ -18,8 +18,10 @@ public class NodeChannel {
      */
     private final String sourceHost;
     private final int sourcePort;
+    private int slaveServerPort;
     private final String targetHost;
     private final int targetPort;
+    private String indexPath;
     private ManagedChannel channel;
     private NodeState state = NodeState.ZERO_RUNNING;
     private LocalDateTime lastTime = LocalDateTime.now();
@@ -92,5 +94,21 @@ public class NodeChannel {
 
     public void setDocsTotal(int docsTotal) {
         this.docsTotal = docsTotal;
+    }
+
+    public String getIndexPath() {
+        return indexPath;
+    }
+
+    public void setIndexPath(String indexPath) {
+        this.indexPath = indexPath;
+    }
+
+    public int getSlaveServerPort() {
+        return slaveServerPort;
+    }
+
+    public void setSlaveServerPort(int slaveServerPort) {
+        this.slaveServerPort = slaveServerPort;
     }
 }

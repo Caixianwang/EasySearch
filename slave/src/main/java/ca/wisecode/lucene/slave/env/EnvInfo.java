@@ -18,12 +18,17 @@ public class EnvInfo {
 
     private String slaveHost;
 
+    @Value("${server.port:8081}")
+    private int slaveServerPort;
     @Value("${grpc.port:50051}")
     private int slavePort;
     @Value("${grpc.master-host:localhost}")
     private String masterHost;
     @Value("${grpc.master-port:50051}")
     private int masterPort;
+
+    @Value("${lucene.path}")
+    private String indexPath;
 
     public void setSlaveHost(String slaveHost) {
         this.slaveHost = slaveHost;
@@ -47,5 +52,13 @@ public class EnvInfo {
 
     public int getMasterPort() {
         return masterPort;
+    }
+
+    public String getIndexPath() {
+        return indexPath;
+    }
+
+    public int getSlaveServerPort() {
+        return slaveServerPort;
     }
 }
