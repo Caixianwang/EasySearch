@@ -23,6 +23,13 @@ public class FieldMeta {
         public static final String TIME = "Time";
         public static final String DATETIME = "Datetime";
     }
+    public FieldMeta() {
+
+    }
+    public FieldMeta(String name, String type) {
+        this.name = name;
+        this.type = type;
+    }
 
     public String getType() {
         return type;

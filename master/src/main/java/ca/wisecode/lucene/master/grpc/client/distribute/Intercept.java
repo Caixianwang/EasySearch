@@ -14,7 +14,7 @@ import ca.wisecode.lucene.master.grpc.node.MasterNode;
 public class Intercept {
     public static boolean isValid(MasterNode masterNode) {
         for (NodeChannel channel : masterNode.getChannels()) {
-            if (channel.getState() == NodeState.ONE_BALANCING || channel.getState() == NodeState.TWO_REMOVING_) {
+            if (channel.getState() == NodeState.ONE_BALANCING || channel.getState() == NodeState.TWO_REMOVING) {
                 return false;
             }
         }

@@ -18,7 +18,7 @@ import java.util.*;
 @Slf4j
 public class FetchSample {
     private ScoreDoc lastScoreDoc = null;
-    private int pageSize = 3000;
+    private int pageSize = 500;
     private final MatchAllDocsQuery query = new MatchAllDocsQuery();  // 可替换为其他查询
 
     public List<ScoreDoc> pagedSearch(IndexSearcher searcher, float percent) throws IOException {

@@ -55,8 +55,18 @@ public class WebTest {
         RestAssured.given()
                 .log().all()  // 记录所有请求信息
                 .queryParam("host", "192.168.1.89")  // Add the 'host' query parameter
-                .queryParam("port", 50051)           // Add the 'port' query parameter
+                .queryParam("port", 50053)           // Add the 'port' query parameter
                 .when().get("/api/distribute/remove")
+                .then()
+                .log().all()  // 记录所有响应信息
+                .statusCode(200);
+    }
+    @Test
+    void queryList() throws Exception {
+        RestAssured.given()
+                .log().all()  // 记录所有请求信息
+                .queryParam("content", "健康饮食")  // Add the 'host' query parameter// Add the 'port' query parameter
+                .when().get("/api/query/queryList")
                 .then()
                 .log().all()  // 记录所有响应信息
                 .statusCode(200);

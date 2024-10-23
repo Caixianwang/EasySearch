@@ -8,6 +8,7 @@ import io.grpc.ManagedChannel;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,16 +23,17 @@ import java.time.LocalDateTime;
 @Slf4j
 public class HealthService {
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private SearchManager searchManager;
 
     public void healthCheck(NodeChannel nodeChannel) {
         ManagedChannel managedChannel = nodeChannel.getChannel();
         ActuatorServiceGrpc.ActuatorServiceStub stub = ActuatorServiceGrpc.newStub(managedChannel);
-
         HealthInOut healthIn = HealthInOut.newBuilder()
                 .setHost(nodeChannel.getSourceHost())
                 .setPort(nodeChannel.getSourcePort())
                 .setState(nodeChannel.getState().getValue())
+                .setDocsTotal(searchManager.getReader().numDocs())
                 .build();
 
         stub.health(healthIn, new StreamObserver<HealthInOut>() {

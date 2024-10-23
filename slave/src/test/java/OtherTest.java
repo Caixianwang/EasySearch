@@ -1,14 +1,22 @@
+import ca.wisecode.lucene.common.grpc.node.NodeChannel;
+import ca.wisecode.lucene.common.model.QueryLogic;
+import ca.wisecode.lucene.common.model.QueryMode;
 import ca.wisecode.lucene.common.util.Constants;
 import ca.wisecode.lucene.grpc.models.FilterRule;
 import ca.wisecode.lucene.slave.grpc.client.service.SearchManager;
 import ca.wisecode.lucene.slave.grpc.server.query.mode.AbstractQuery;
 import ca.wisecode.lucene.slave.grpc.server.query.mode.ChainQueryFactory;
 import ca.wisecode.lucene.slave.grpc.server.query.mode.IWrapQuery;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
+import org.apache.lucene.search.highlight.Highlighter;
+import org.apache.lucene.search.highlight.QueryScorer;
+import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.BytesRef;
@@ -18,7 +26,9 @@ import org.wltea.analyzer.lucene.IKAnalyzer;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author: caixianwang2022@gmail.com
@@ -28,38 +38,71 @@ import java.util.List;
  */
 @Slf4j
 public class OtherTest {
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    @Test
+    public void t0003() throws Exception {
+        List<NodeChannel> channels = new ArrayList<>();
+        String s = objectMapper.writeValueAsString(channels);
+        log.info(channels.toString());
+    }
 
     @Test
     public void t0002() throws Exception {
-        Directory directory = FSDirectory.open(Paths.get("/home/search/index5"));
+        Directory directory = FSDirectory.open(Paths.get("/home/search/index3"));
         SearchManager searchManager = new SearchManager(directory);
         IndexSearcher searcher = searchManager.getSearcher();
         Analyzer analyzer = new IKAnalyzer(true);
-        BooleanQuery.Builder builder = new BooleanQuery.Builder();
-        IWrapQuery iWrapQuery = ChainQueryFactory.getInstance().buildQuery(analyzer, builder);
+        List<FilterRule> filterRulesList = new ArrayList<>();
         FilterRule filterRule1 = FilterRule.newBuilder()
                 .setName("author")
                 .setValue("刘超")
-                .setQueryMode(AbstractQuery.Mode.Term)
-                .setLogic(AbstractQuery.LOGIC.AND).build();
-        iWrapQuery.build(filterRule1);
+                .setQueryMode(QueryMode.Term)
+                .setLogic(QueryLogic.AND).build();
+//        filterRulesList.add(filterRule1);
         FilterRule filterRule2 = FilterRule.newBuilder()
-                .setName("title")
-                .setValue("挑战经验失败总结潜力目标联系")
-                .setQueryMode(AbstractQuery.Mode.Parser)
-                .setLogic(AbstractQuery.LOGIC.NOT).build();
-        iWrapQuery.build(filterRule2);
-        BooleanQuery query = builder.build();
-        log.info(builder.build().toString());
-//        +title:挑战经验失败总结潜力目标联系
-//        +(title:挑战 title:经验 title:失败 title:总结 title:潜力 title:目标 title:联系)
-        TopDocs topDocs = searcher.search(query, 10);
-        log.info(topDocs.scoreDocs.length+"");
-        for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
-            Document doc = searcher.doc(scoreDoc.doc);
-            log.info(doc.toString());
+                .setName("content")
+                .setValue("健康饮食")
+                .setQueryMode(QueryMode.Parser)
+                .setLogic(QueryLogic.AND).build();
+        filterRulesList.add(filterRule2);
+
+        BooleanQuery.Builder builder = new BooleanQuery.Builder();
+        IWrapQuery iWrapQuery = ChainQueryFactory.getInstance().buildQuery(analyzer);
+        for (FilterRule filterRule : filterRulesList) {
+            iWrapQuery.build(builder,filterRule);
         }
 
+        BooleanQuery query = builder.build();
+        log.info(builder.build().toString());
+
+        TopDocs topDocs = searcher.search(query, 10);
+        SimpleHTMLFormatter htmlFormatter = new SimpleHTMLFormatter("<b>", "</b>");
+        Highlighter highlighter = new Highlighter(htmlFormatter, new QueryScorer(query));
+        log.info(topDocs.scoreDocs.length + "");
+        List<Map<String, String>> list = new ArrayList<>();
+        for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+            Document doc = searcher.doc(scoreDoc.doc);
+            Map<String, String> documentMap = new HashMap<>();
+            // 获取文档的所有字段
+            for (IndexableField field : doc.getFields()) {
+                String fieldName = field.name();
+                String fieldValue = doc.get(fieldName);
+                String highlightedText = highlighter.getBestFragment(analyzer, "content", fieldValue);
+                if (highlightedText != null) {
+                    System.out.println("Highlighted: " + highlightedText);
+                } else {
+                    System.out.println("No highlights found for: " + fieldValue);
+                }
+                documentMap.put(fieldName, fieldValue);
+            }
+            list.add(documentMap);
+
+        }
+        String jsonString = objectMapper.writeValueAsString(list);
+        List<Map<String, String>> listq = objectMapper.readValue(jsonString, new TypeReference<List<Map<String, String>>>() {});
+        for(Map<String,String> map:listq){
+            log.info(map.toString());
+        }
 
     }
 
@@ -203,7 +246,7 @@ public class OtherTest {
 
     @Test
     public void deleteAll() throws Exception {
-        Directory directory = FSDirectory.open(Paths.get("/home/search/index5"));
+        Directory directory = FSDirectory.open(Paths.get("/home/search/index3"));
         IndexWriterConfig config = new IndexWriterConfig(new IKAnalyzer(true));
         IndexWriter indexWriter = new IndexWriter(directory, config);
 

@@ -25,6 +25,11 @@ public class DistributeController {
     @Autowired
     private RemoveService removeService;
 
+    @GetMapping("/test")
+    public String test() {
+        return "test";
+    }
+
     @GetMapping("/balance")
     public String balance() {
         balanceService.balance();

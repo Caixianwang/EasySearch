@@ -1,7 +1,7 @@
 package ca.wisecode.lucene.slave.grpc.server.query.mode;
 
 import ca.wisecode.lucene.grpc.models.FilterRule;
-import org.apache.lucene.search.Query;
+import org.apache.lucene.search.BooleanQuery;
 
 /**
  * @author: caixianwang2022@gmail.com
@@ -10,7 +10,7 @@ import org.apache.lucene.search.Query;
  * @description:
  */
 public interface IWrapQuery {
-    Query build(FilterRule filterRule);
+    void build(BooleanQuery.Builder builder, FilterRule filterRule);
 
     void setNextQuery(IWrapQuery nextQuery);
 }

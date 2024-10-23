@@ -50,14 +50,14 @@ public class CovertData {
     private Row covertRow(Document document) {
         PrjMeta prjMeta = projectService.readProject(document.get(Constants._PRJID_));
         Row.Builder builder = Row.newBuilder();
-        for (String key : new String[]{Constants._ID_, Constants._PRJID_}) {
-            Cell cell = CellFactory.balanceConvert(FieldMeta.Type.STRING, null, key, document.get(key));
-            builder.addCells(cell);
-        }
+
         for (FieldMeta fieldMeta : prjMeta.getFields()) {
             String value = document.get(fieldMeta.getName());
-            Cell cell = CellFactory.balanceConvert(fieldMeta.getType(), fieldMeta.getFormat(), fieldMeta.getName(), value);
-            builder.addCells(cell);
+            if (value != null && !value.isEmpty()) {
+                Cell cell = CellFactory.distributeConvert(fieldMeta.getType(), fieldMeta.getFormat(), fieldMeta.getName(), value);
+                builder.addCells(cell);
+            }
+
         }
         return builder.build();
     }

@@ -1,8 +1,6 @@
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.en.EnglishAnalyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -19,6 +17,9 @@ import org.wltea.analyzer.lucene.IKAnalyzer;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author: caixianwang2022@gmail.com
@@ -90,13 +91,47 @@ public class LuceneBase {
     }
 
     @Test
+    public void test0001() {
+        List<String> list = List.of("居住", "饮食", "健康", "旅行", "健康");
+        String text = "居住饮食饮食健康旅行健康健康健康";
+
+        String highlightedText = highlightKeywords(text, list);
+        System.out.println(highlightedText);
+    }
+
+    private String highlightKeywords(String text, List<String> keywords) {
+        StringBuilder result = new StringBuilder();
+        String openTag = "<span style='color:red'>";  // 高亮开始标签
+        String closeTag = "</span>";                  // 高亮结束标签
+
+        // 构建正则表达式
+        String regex = String.join("|", keywords);
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(text);
+
+        int lastEnd = 0;
+        while (matcher.find()) {
+            // 把上一个匹配后的非关键词部分加入结果
+            result.append(text, lastEnd, matcher.start());
+            // 把关键词部分加入结果并加上高亮标签
+            result.append(openTag).append(matcher.group()).append(closeTag);
+            lastEnd = matcher.end();
+        }
+        // 把最后一个关键词后剩余的部分加入结果
+        result.append(text.substring(lastEnd));
+
+        return result.toString();
+    }
+
+    @Test
     public void test01() {
-        String text = "刘超";
+        List<String> list = List.of("居住", "饮食", "健康", "旅行", "健康");
+        String text = "居住饮食饮食健康旅行健康健康健康";
         // 使用不同的分析器
         Analyzer[] analyzers;
         analyzers = new Analyzer[]{
-                new StandardAnalyzer(),           // 标准分析器
-                new EnglishAnalyzer(),            // 英文分析器
+//                new StandardAnalyzer(),           // 标准分析器
+//                new EnglishAnalyzer(),            // 英文分析器
                 new IKAnalyzer(true)
         };
 

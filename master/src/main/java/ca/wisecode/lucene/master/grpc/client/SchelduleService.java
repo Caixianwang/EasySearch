@@ -26,13 +26,13 @@ public class SchelduleService {
     private final HealthService healthService;
     private final MasterNode masterNode;
 
-    @Scheduled(initialDelay = 30000, fixedRate = 15000)
+    @Scheduled(initialDelay = 30000, fixedRate = 2000)
     public void scanSlaveTask() {
         for (NodeChannel nodeChannel : masterNode.getChannels()) {
-            log.info("---" + nodeChannel.getTargetPort() + "---" + nodeChannel.getState());
+//            log.info("---" + nodeChannel.getTargetPort() + "---" + nodeChannel.getState());
             // 如果Slave检查过，就不用再次检查
             long interval = Duration.between(nodeChannel.getLastTime(), LocalDateTime.now()).getSeconds();
-            if (interval > 10 && nodeChannel.getFailTimes() < 10 && nodeChannel.getState().getValue() >= NodeState.ONE_FAILURE_.getValue()) {
+            if (interval > 1 && nodeChannel.getFailTimes() < 10 && nodeChannel.getState().getValue() >= NodeState.ONE_FAILURE.getValue()) {
                 healthService.healthCheck(nodeChannel);
             }
         }

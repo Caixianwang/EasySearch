@@ -1,8 +1,8 @@
 package ca.wisecode.lucene.slave.grpc.server.query.mode;
 
+import ca.wisecode.lucene.common.model.QueryMode;
 import ca.wisecode.lucene.grpc.models.FilterRule;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 
@@ -15,8 +15,8 @@ import org.apache.lucene.search.TermQuery;
 
 public class TermWrapQuery extends AbstractQuery {
 
-    protected TermWrapQuery(BooleanQuery.Builder builder) {
-        super(builder, Mode.Term);
+    protected TermWrapQuery() {
+        super(QueryMode.Term);
     }
 
     @Override

@@ -45,7 +45,7 @@ public class IndexBS extends IndexBase {
             List<Map<String, Object>> rowList = new ArrayList<>();
             while ((line = reader.readNext()) != null) {
                 Map<String, Object> mapRow = this.lineToMap(prjID, header, line);
-                rowList.add(mapRow);
+                this.addToList(mapRow, rowList);
                 if (rowList.size() > Constants.MAX_ROWS) {
                     this.handleData(prjMeta, rowList);
                 }
@@ -55,6 +55,23 @@ public class IndexBS extends IndexBase {
             }
         } catch (IOException | CsvException e) {
 
+        }
+    }
+
+    private void addToList(Map<String, Object> mapRow, List<Map<String, Object>> rowList) {
+        if (mapRow != null) {
+            boolean exist = false;
+            for (Map<String, Object> map : rowList) {
+                String inVal = (String) map.get(Constants._ID_);
+                String currVal = (String) mapRow.get(Constants._ID_);
+                if (inVal.equals(currVal)) {
+                    exist = true;
+                    break;
+                }
+            }
+            if (!exist) {
+                rowList.add(mapRow);
+            }
         }
     }
 

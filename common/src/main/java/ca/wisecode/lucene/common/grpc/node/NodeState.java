@@ -10,10 +10,10 @@ public enum NodeState {
     ONE_BALANCING(1),
     ZERO_RUNNING(0),
 
-    ONE_FAILURE_(-1),
-    TWO_REMOVING_(-2),
+    ONE_FAILURE(-1),
+    TWO_REMOVING(-2),
 
-    NINE_CLOSED_(-9);
+    NINE_CLOSED(-9);
 
     private int value;
 

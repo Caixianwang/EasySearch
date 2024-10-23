@@ -30,11 +30,11 @@ public class SchelduleService {
     private final StateBS stateBS;
     private final IndexWriter indexWriter;
 
-    @Scheduled(initialDelay = 30000, fixedRate = 15000)
+    @Scheduled(initialDelay = 30000, fixedRate = 2000)
     public void healthTask() {
         // 如果master检查过，就不用再次检查
         long interval = Duration.between(nodeChannel.getLastTime(), LocalDateTime.now()).getSeconds();
-        if (interval > 10 || nodeChannel.getFailTimes() != 0) {
+        if (interval > 1 || nodeChannel.getFailTimes() != 0) {
             healthService.healthCheck(nodeChannel);
         }
     }

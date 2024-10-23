@@ -1,7 +1,9 @@
 package ca.wisecode.lucene.master.service.project;
 
 import ca.wisecode.lucene.common.exception.BusinessException;
+import ca.wisecode.lucene.common.model.FieldMeta;
 import ca.wisecode.lucene.common.model.PrjMeta;
+import ca.wisecode.lucene.common.util.Constants;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +32,11 @@ public class ProjectBS {
         try (InputStream inputStream = resource.getInputStream()) {
             projs = objectMapper.readValue(inputStream, new TypeReference<List<PrjMeta>>() {
             });
+            for (PrjMeta prjMeta : projs) {
+                prjMeta.getFields().add(new FieldMeta(Constants._ID_, FieldMeta.Type.STRING));
+                prjMeta.getFields().add(new FieldMeta(Constants._PRJID_, FieldMeta.Type.STRING));
+                prjMeta.getFields().add(new FieldMeta(Constants._CREATED_, FieldMeta.Type.LONG));
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

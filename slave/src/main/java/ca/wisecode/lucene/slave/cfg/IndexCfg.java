@@ -2,6 +2,7 @@ package ca.wisecode.lucene.slave.cfg;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -34,8 +35,13 @@ public class IndexCfg {
     }
 
     @Bean
-    public IndexWriterConfig indexWriterConfig() {
-        IndexWriterConfig config = new IndexWriterConfig(new IKAnalyzer(true));
+    public Analyzer luceneAnalyzer() throws IOException {
+        return new IKAnalyzer(true);
+    }
+
+    @Bean
+    public IndexWriterConfig indexWriterConfig(Analyzer analyzer) {
+        IndexWriterConfig config = new IndexWriterConfig(analyzer);
         config.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
         // 内存最大提交
         config.setMaxBufferedDocs(300);

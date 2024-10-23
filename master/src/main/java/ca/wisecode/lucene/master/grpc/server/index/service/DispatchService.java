@@ -155,6 +155,7 @@ public class DispatchService {
                 }
             }
         }
+
         indexDAO.insertBatch(ids);
     }
 

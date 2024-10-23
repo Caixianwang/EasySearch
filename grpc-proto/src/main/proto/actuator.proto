@@ -13,6 +13,7 @@ message HealthInOut {
     string host = 1;
     int32 port = 2;
     int32 state = 3;
-    string msg = 4;
+    int32 docsTotal = 4;
+    string msg = 5;
 }
 

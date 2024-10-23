@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class Transfer {
-    private int MAX_DOC = 1500;
+    private int MAX_DOC = 50;
     private CovertData covertData;
     private IndexWriter indexWriter;
 

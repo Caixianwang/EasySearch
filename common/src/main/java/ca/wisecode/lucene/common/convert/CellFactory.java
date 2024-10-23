@@ -5,8 +5,9 @@ import ca.wisecode.lucene.common.exception.BusinessException;
 import ca.wisecode.lucene.common.model.FieldMeta;
 import ca.wisecode.lucene.common.model.FieldMeta.Type;
 import ca.wisecode.lucene.common.model.PrjMeta;
-import ca.wisecode.lucene.common.util.Constants;
 import ca.wisecode.lucene.grpc.models.Cell;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.util.Set;
 
@@ -16,7 +17,7 @@ import java.util.Set;
  * @Version: 1.0
  * @description:
  */
-
+@Slf4j
 public class CellFactory {
 
 
@@ -29,9 +30,7 @@ public class CellFactory {
      * @return
      */
     public static Cell convert(PrjMeta prjMeta, String key, Object val) {
-        if (key.equals(Constants._ID_) || key.equals(Constants._PRJID_)) {
-            return Cell.newBuilder().setType(FieldMeta.Type.STRING).setName(key).setStringVal((String) val).build();
-        }
+
         for (FieldMeta field : prjMeta.getFields()) {
             if (key.equals(field.getName())) {
                 Converter converter;
@@ -51,10 +50,8 @@ public class CellFactory {
         throw new BusinessException("There is no corresponding configuration in the project > key:" + key);
     }
 
-    public static Cell balanceConvert(String type, String format, String key, Object val) {
-        if (key.equals(Constants._ID_) || key.equals(Constants._PRJID_)) {
-            return Cell.newBuilder().setType(FieldMeta.Type.STRING).setName(key).setStringVal((String) val).build();
-        }
+    public static Cell distributeConvert(String type, String format, String key, Object val) {
+
         Set<String> types = Set.of(Type.DATE, Type.TIME, Type.DATETIME);
         if (types.contains(type)) {
             type = Type.LONG;

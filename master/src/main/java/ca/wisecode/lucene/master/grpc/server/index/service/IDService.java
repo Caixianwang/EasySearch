@@ -37,6 +37,7 @@ public class IDService {
         for (Map<String, Object> map : rowList) {
             ids.add((String) map.get(Constants._ID_));
         }
+        this.availableIds(ids,rowList);
 
     }
 

@@ -72,14 +72,14 @@ public class ManageImpl {
     public JsonOut remove(final DistributeRequest removeRequest) {
         try {
             int numDocs = searchManager.getReader().numDocs();
-            nodeChannel.setState(NodeState.TWO_REMOVING_);
+            nodeChannel.setState(NodeState.TWO_REMOVING);
             healthService.healthCheck(nodeChannel);
             removeDistribute.distribute(removeRequest);
             return JsonOut.newBuilder()
                     .setMsg(String.format("{\"code\":200,\"total\":\"%d\"}", numDocs))
                     .build();
         } finally {
-            nodeChannel.setState(NodeState.NINE_CLOSED_);
+            nodeChannel.setState(NodeState.NINE_CLOSED);
         }
 
     }

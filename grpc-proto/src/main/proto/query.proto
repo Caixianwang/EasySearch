@@ -6,7 +6,7 @@ option java_outer_classname = "QueryProto";
 option java_multiple_files = true;
 
 service QueryService {
-    rpc query (Pager) returns (JsonOut) {}
+    rpc query (PagerRequest) returns (JsonOut) {}
 }
 
 message SortRule {
@@ -21,7 +21,7 @@ message FilterRule {
     string logic = 4;
 }
 
-message Pager {
+message PagerRequest {
     int32 pageSize = 2;
     string lastID = 3;
     repeated FilterRule filterRules = 4;

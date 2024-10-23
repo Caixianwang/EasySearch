@@ -1,6 +1,7 @@
 package ca.wisecode.lucene.slave.grpc.server.query.mode;
 
 import ca.wisecode.lucene.common.exception.BusinessException;
+import ca.wisecode.lucene.common.model.QueryMode;
 import ca.wisecode.lucene.grpc.models.FilterRule;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.analysis.Analyzer;
@@ -18,8 +19,8 @@ import org.apache.lucene.search.Query;
 public class ParserWrapQuery extends AbstractQuery {
     private final Analyzer analyzer;
 
-    protected ParserWrapQuery(Analyzer analyzer, BooleanQuery.Builder builder) {
-        super(builder, Mode.Parser);
+    protected ParserWrapQuery(Analyzer analyzer) {
+        super(QueryMode.Parser);
         this.analyzer = analyzer;
     }
 

@@ -37,6 +37,7 @@ public class HealthService {
                 nodeChannel.setLastTime(LocalDateTime.now());
                 nodeChannel.setFailTimes(0);
                 nodeChannel.setState(NodeState.fromValue(healthOut.getState()));
+                nodeChannel.setDocsTotal(healthOut.getDocsTotal());
 //                log.info("Master scan client healthCheck success - > {}", nodeChannel.getTips());
             }
 
@@ -44,7 +45,7 @@ public class HealthService {
             public void onError(Throwable t) {
                 nodeChannel.setLastTime(LocalDateTime.now());
                 nodeChannel.setFailTimes(nodeChannel.getFailTimes() + 1);
-                nodeChannel.setState(NodeState.ONE_FAILURE_);
+                nodeChannel.setState(NodeState.ONE_FAILURE);
                 if (t instanceof StatusRuntimeException e) {
                     log.error("Master scan client healthCheck failed - > {} {}", nodeChannel.getTips(), e.getMessage());
                 } else {

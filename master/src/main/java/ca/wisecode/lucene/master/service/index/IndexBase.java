@@ -10,6 +10,8 @@ import ca.wisecode.lucene.grpc.models.RowsRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -29,17 +31,24 @@ public class IndexBase {
     protected Map<String, Object> lineToMap(String prjID, String[] header, String[] line) {
         Map<String, Object> map = new HashMap<>();
         StringBuilder sb = new StringBuilder();
-        sb.append(prjID);
-        map.put(Constants._PRJID_, prjID);
         for (int i = 0; i < header.length; i++) {
             if (!line[i].isEmpty()) {
                 sb.append(line[i]);
                 map.put(header[i], line[i]);
             }
         }
-        String id = HashUtil.getInstance().calcHash(sb.toString());
-        map.put(Constants._ID_, id);
-        return map;
+        if(sb.toString().isEmpty()){
+            return null;
+        }else {
+            sb.append(prjID);
+            map.put(Constants._PRJID_, prjID);
+            String id = HashUtil.getInstance().calcHash(sb.toString());
+
+            map.put(Constants._ID_, id);
+            LocalDateTime now = LocalDateTime.now();
+            map.put(Constants._CREATED_, now.toInstant(ZoneOffset.UTC).toEpochMilli());
+            return map;
+        }
     }
 
     protected RowsRequest list2Rows(PrjMeta prjMeta, List<Map<String, Object>> rowList) {

@@ -15,6 +15,7 @@ public final class Constants {
     public static final String MY_NAME = "CAIXIAN WANG";
     public static final String _ID_ = "_ID_";
     public static final String _PRJID_ = "_PRJID_";
+    public static final String _CREATED_ = "_CREATED_";
     public static final int MAX_ROWS = 100;
     /**
      * 内存中暂存的最大索引记录数

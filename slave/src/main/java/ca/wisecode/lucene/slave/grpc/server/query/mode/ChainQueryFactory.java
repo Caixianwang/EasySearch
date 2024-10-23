@@ -26,10 +26,10 @@ public class ChainQueryFactory {
         return instance;
     }
 
-    public IWrapQuery buildQuery(Analyzer analyzer, BooleanQuery.Builder builder) {
+    public IWrapQuery buildQuery(Analyzer analyzer) {
         if (this.cacheQuery == null) {
-            IWrapQuery parserQuery = new ParserWrapQuery(analyzer, builder);
-            IWrapQuery termWrapQuery = new TermWrapQuery(builder);
+            IWrapQuery parserQuery = new ParserWrapQuery(analyzer);
+            IWrapQuery termWrapQuery = new TermWrapQuery();
             parserQuery.setNextQuery(termWrapQuery);
             this.cacheQuery = parserQuery;
             return parserQuery;
