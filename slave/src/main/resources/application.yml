@@ -7,15 +7,15 @@ spring:
 
 
 server:
-  port: 8082
+  port: 8084
   http2:
     enabled: true
 
 grpc:
-  port: 50052
+  port: 50054
   master-host: localhost
   master-port: 50050
 
 #    port: ${server.port}
 lucene:
-  path: /home/search/index2
+  path: /home/search/index4
