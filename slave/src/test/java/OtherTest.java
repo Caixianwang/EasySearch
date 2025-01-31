@@ -1,10 +1,8 @@
-import ca.wisecode.lucene.common.grpc.node.NodeChannel;
 import ca.wisecode.lucene.common.model.QueryLogic;
 import ca.wisecode.lucene.common.model.QueryMode;
 import ca.wisecode.lucene.common.util.Constants;
 import ca.wisecode.lucene.grpc.models.FilterRule;
 import ca.wisecode.lucene.slave.grpc.client.service.SearchManager;
-import ca.wisecode.lucene.slave.grpc.server.query.mode.AbstractQuery;
 import ca.wisecode.lucene.slave.grpc.server.query.mode.ChainQueryFactory;
 import ca.wisecode.lucene.slave.grpc.server.query.mode.IWrapQuery;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -39,11 +37,14 @@ import java.util.Map;
 @Slf4j
 public class OtherTest {
     private static final ObjectMapper objectMapper = new ObjectMapper();
+
     @Test
     public void t0003() throws Exception {
-        List<NodeChannel> channels = new ArrayList<>();
-        String s = objectMapper.writeValueAsString(channels);
-        log.info(channels.toString());
+        int cnt = 1;
+        int distributeTotal = 3;
+        int totalSize = 5;
+        int res = (int) Math.round((float) cnt / distributeTotal * totalSize);
+        System.out.println(res);
     }
 
     @Test
@@ -69,7 +70,7 @@ public class OtherTest {
         BooleanQuery.Builder builder = new BooleanQuery.Builder();
         IWrapQuery iWrapQuery = ChainQueryFactory.getInstance().buildQuery(analyzer);
         for (FilterRule filterRule : filterRulesList) {
-            iWrapQuery.build(builder,filterRule);
+            iWrapQuery.build(builder, filterRule);
         }
 
         BooleanQuery query = builder.build();
@@ -99,8 +100,9 @@ public class OtherTest {
 
         }
         String jsonString = objectMapper.writeValueAsString(list);
-        List<Map<String, String>> listq = objectMapper.readValue(jsonString, new TypeReference<List<Map<String, String>>>() {});
-        for(Map<String,String> map:listq){
+        List<Map<String, String>> listq = objectMapper.readValue(jsonString, new TypeReference<List<Map<String, String>>>() {
+        });
+        for (Map<String, String> map : listq) {
             log.info(map.toString());
         }
 

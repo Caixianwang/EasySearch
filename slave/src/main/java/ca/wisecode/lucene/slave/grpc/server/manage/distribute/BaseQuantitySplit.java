@@ -26,10 +26,14 @@ public class BaseQuantitySplit {
     protected List<DestNode> createDestination(int distributeTotal, DistributeRequest distributeRequest, List<ScoreDoc> scoreDocs) {
         int totalSize = scoreDocs.size();
         List<DestNode> destNodes = new ArrayList<>();
+
         int start = 0;
         for (TargetNode targetNode : distributeRequest.getTargetNodesList()) {
             DestNode destNode = new DestNode(targetNode.getHost(), targetNode.getPort());
             int partSize = (int) Math.round((float) targetNode.getCnt() / distributeTotal * totalSize);
+            if (partSize == 0) {
+                partSize = 1;
+            }
             // Ensure we don't go out of bounds
             int end = Math.min(start + partSize, totalSize);
             destNode.setList(scoreDocs.subList(start, end));

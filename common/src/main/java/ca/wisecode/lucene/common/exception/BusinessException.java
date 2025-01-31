@@ -29,6 +29,7 @@ public class BusinessException extends RuntimeException {
         super(errorMessage, cause);
         this.errorMessage = errorMessage;
     }
+
     public BusinessException(Throwable cause) {
         super(cause);
     }
@@ -39,7 +40,6 @@ public class BusinessException extends RuntimeException {
         this.errorMessage = errorMessage;
     }
 
-    // Getter 和 Setter 方法
     public int getErrorCode() {
         return errorCode;
     }
